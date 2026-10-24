@@ -46,7 +46,7 @@ const initial=[
 const $=id=>document.getElementById(id), money=n=>new Intl.NumberFormat("es-CL",{style:"currency",currency:"CLP",maximumFractionDigits:0}).format(n);
 let items=loadItems(),cart=loadCart(),filter="Todos",toastTimer;
 function clone(x){return JSON.parse(JSON.stringify(x))}
-function loadItems(){try{const x=JSON.parse(localStorage.getItem("micelio-stock"));return Array.isArray(x)?x:clone(initial)}catch(e){return clone(initial)}}
+function loadItems(){try{const saved=JSON.parse(localStorage.getItem("micelio-stock"));if(!Array.isArray(saved))return clone(initial);return initial.map(base=>{const previous=saved.find(p=>p.id===base.id);return previous?{...base,price:Number.isFinite(Number(previous.price))?Number(previous.price):base.price,stock:Number.isInteger(Number(previous.stock))&&Number(previous.stock)>=0?Number(previous.stock):base.stock}:base})}catch(e){return clone(initial)}}
 function loadCart(){try{const x=JSON.parse(localStorage.getItem("micelio-cart"));return x&&typeof x==="object"?x:{}}catch(e){return {}}}
 function persist(){try{localStorage.setItem("micelio-stock",JSON.stringify(items));localStorage.setItem("micelio-cart",JSON.stringify(cart))}catch(e){}}
 function safe(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
